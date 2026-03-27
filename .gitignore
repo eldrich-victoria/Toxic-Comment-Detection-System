@@ -1,0 +1,27 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Large data files (too big for GitHub)
+version_1/data/raw/
+version_1/data/processed/
+version_2/data/raw/
+version_2/data/processed/
+
+# Large model/pkl files
+version_1/models/X.pkl
+version_1/models/y.pkl
+version_2/models/X_train.pkl
+version_2/models/X_test.pkl
+version_2/models/y_train.pkl
+version_2/models/y_test.pkl
+
+# BERT checkpoints (very large)
+version_2/models/bert/checkpoint-*/
+version_2/models/bert/model.safetensors
+
+# Misc
+.ipynb_checkpoints/
