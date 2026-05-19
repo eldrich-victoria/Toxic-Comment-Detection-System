@@ -1,0 +1,14 @@
+models:
+  - name: baseline_logistic_regression
+    version: "1.0"
+    type: sklearn
+    path: "models/baseline.pkl"
+  - name: distilbert_toxic
+    version: "2.0"
+    type: huggingface
+    path: "unitary/toxic-bert"
+ensemble:
+  method: weighted_average
+  weights:
+    baseline_logistic_regression: 0.3
+    distilbert_toxic: 0.7

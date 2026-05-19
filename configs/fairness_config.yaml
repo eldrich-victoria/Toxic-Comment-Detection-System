@@ -1,0 +1,11 @@
+fairness:
+  protected_attributes:
+    - race
+    - gender
+    - religion
+  metrics:
+    - disparate_impact
+    - equal_opportunity
+  thresholds:
+    disparate_impact: 0.8
+    equal_opportunity_diff: 0.1

@@ -1,0 +1,9 @@
+benchmark:
+  default_batch_size: 32
+  random_seed: 42
+  metrics:
+    - accuracy
+    - f1_score
+    - roc_auc
+  timeout_seconds: 3600
+  async_execution: true

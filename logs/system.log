@@ -1,0 +1,22 @@
+2026-05-19 12:35:06,497 - app - INFO - GET /health completed in 0.0020s
+2026-05-19 12:35:06,498 - httpx - INFO - HTTP Request: GET http://testserver/health "HTTP/1.1 200 OK"
+2026-05-19 12:35:06,504 - app - INFO - POST /benchmark/run completed in 0.0010s
+2026-05-19 12:35:06,504 - httpx - INFO - HTTP Request: POST http://testserver/benchmark/run "HTTP/1.1 422 Unprocessable Entity"
+2026-05-19 12:35:06,507 - app - INFO - Starting benchmark run: run_1779174306
+2026-05-19 12:35:06,508 - app - INFO - POST /benchmark/run completed in 0.0010s
+2026-05-19 12:35:06,509 - httpx - INFO - HTTP Request: POST http://testserver/benchmark/run "HTTP/1.1 200 OK"
+2026-05-19 12:35:06,512 - app - INFO - Starting benchmark run: run_1779174306
+2026-05-19 12:35:06,513 - app - INFO - POST /benchmark/run completed in 0.0010s
+2026-05-19 12:35:06,514 - httpx - INFO - HTTP Request: POST http://testserver/benchmark/run "HTTP/1.1 200 OK"
+2026-05-19 12:35:06,516 - app - INFO - GET /benchmark/results completed in 0.0000s
+2026-05-19 12:35:06,517 - httpx - INFO - HTTP Request: GET http://testserver/benchmark/results "HTTP/1.1 200 OK"
+2026-05-19 12:35:06,518 - app - INFO - GET /benchmark/report/run_1779174306 completed in 0.0000s
+2026-05-19 12:35:06,520 - httpx - INFO - HTTP Request: GET http://testserver/benchmark/report/run_1779174306 "HTTP/1.1 200 OK"
+2026-05-19 12:40:15,546 - app - INFO - GET /docs completed in 0.0000s
+2026-05-19 12:40:15,902 - app - INFO - GET /openapi.json completed in 0.0105s
+2026-05-19 12:41:52,269 - app - INFO - Starting benchmark run: run_1779174712
+2026-05-19 12:41:52,270 - app - INFO - POST /benchmark/run completed in 0.0109s
+2026-05-19 12:41:53,463 - app - INFO - Starting benchmark run: run_1779174713
+2026-05-19 12:41:53,463 - app - INFO - POST /benchmark/run completed in 0.0010s
+2026-05-19 12:41:53,983 - app - INFO - Starting benchmark run: run_1779174713
+2026-05-19 12:41:53,984 - app - INFO - POST /benchmark/run completed in 0.0029s
