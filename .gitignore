@@ -1,0 +1,48 @@
+# Virtual environment
+.venv/
+
+# Python cache
+__pycache__/
+*.pyc
+
+# Large data files (too big for GitHub)
+data/
+
+# Large model/pkl files
+version_1/models/
+version_2/models/
+
+# Runtime artifacts (Models, Tokenizers, Vectorizers)
+artifacts/
+
+# Generated runtime outputs and temporary files
+.venv_old/
+benchmark_results/
+temp_uploads/
+*.log
+*.csv
+
+# Misc
+.ipynb_checkpoints/
+
+# Other files
+.env
+benchmarking/
+configs/
+database/
+logs/
+tests/
+debug_bert.py
+eval.ipynb
+generate_metadata.py
+init_db.py
+project_audit_report.md
+run.py
+setup_artifacts.py
+test_bench.csv
+toxic_comment_prediction_interface_with_bert.ipynb
+toxic_comment_prediction_interface.ipynb
+verify_artifacts.py
+verify_original_models.py
+verify_v2_lr_1_8_extended.py
+verify_v2_lr_1_8.py
