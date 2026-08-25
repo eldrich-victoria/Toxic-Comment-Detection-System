@@ -1,4 +1,4 @@
-# Toxic Comment Detection ML Platform
+# <center>Toxic Comment Detection ML Platform</center>
 
 ## Overview
 This repository contains a machine learning platform for classifying toxic comments and evaluating multiple models. The system combines classical ML models (Logistic Regression, Random Forest, SVM) with a Streamlit dashboard and a FastAPI backend to provide real-time inference, model explainability (LIME), and bulk benchmarking capabilities.
@@ -17,13 +17,200 @@ This repository contains a machine learning platform for classifying toxic comme
 - **Fairness & Drift Analytics**: The dashboards for fairness and drift detection are placeholders. Genuine fairness analysis requires demographic metadata which is absent in standard toxic comment datasets.
 
 ## Project Structure
-- `app/api/`: FastAPI backend serving predictions and benchmarking endpoints.
-- `app/core/`: Contains the `ModelRegistry` which handles safe, lazy loading of ML models from the `artifacts/` deployment layer.
-- `artifacts/`: Runtime deployment artifacts for inference. Contains copies of the required models, tokenizers, vectorizers, and metadata.
-- `benchmarking/`: Engines for running batch inference and computing real metrics via `scikit-learn`.
-- `dashboard/`: Streamlit UI for interaction and batch execution.
-- `database/`: SQLite schema and asynchronous DB integration for storing benchmark results.
-- `version_1/` & `version_2/`: (READ-ONLY) Original raw directories containing the full training artifacts, vectorizers, and historical dataset information. Preserved exactly as originally created.
+
+```text
+├── .gitignore
+├── debug_bert.py
+├── eval.ipynb
+├── generate_metadata.py
+├── init_db.py
+├── project_audit_report.md
+├── README.md
+├── requirements.txt
+├── run.py
+├── setup_artifacts.py
+├── test_bench.csv
+├── toxic_comment_prediction_interface.ipynb
+├── toxic_comment_prediction_interface_with_bert.ipynb
+├── verify_artifacts.py
+├── verify_original_models.py
+├── verify_v2_lr_1_8.py
+├── verify_v2_lr_1_8_extended.py
+├── app/
+│   ├── __init__.py
+│   ├── api/
+│   │   ├── exceptions.py
+│   │   ├── main.py
+│   │   ├── middleware.py
+│   │   ├── routes.py
+│   │   ├── schemas.py
+│   │   └── __init__.py
+│   ├── core/
+│   │   ├── config_loader.py
+│   │   ├── constants.py
+│   │   ├── exceptions.py
+│   │   ├── logger.py
+│   │   ├── model_registry.py
+│   │   ├── path_manager.py
+│   │   ├── validators.py
+│   │   └── __init__.py
+├── artifacts/
+│   ├── v1_lr/
+│   │   ├── logistic_regression.pkl
+│   │   ├── metadata.json
+│   │   └── tfidf.pkl
+│   ├── v1_rf/
+│   │   ├── metadata.json
+│   │   ├── random_forest.pkl
+│   │   └── tfidf.pkl
+│   ├── v1_svm/
+│   │   ├── linear_svm.pkl
+│   │   ├── metadata.json
+│   │   └── tfidf.pkl
+│   ├── v2_bert/
+│   │   ├── config.json
+│   │   ├── metadata.json
+│   │   ├── model.safetensors
+│   │   ├── tokenizer.json
+│   │   └── tokenizer_config.json
+│   ├── v2_lr/
+│   │   ├── logistic_regression.pkl
+│   │   ├── metadata.json
+│   │   └── tfidf_vectorizer.pkl
+│   ├── v2_svm/
+│   │   ├── linear_svm.pkl
+│   │   ├── metadata.json
+│   │   └── tfidf_vectorizer.pkl
+├── benchmarking/
+│   ├── benchmark_runner.py
+│   ├── benchmark_utils.py
+│   ├── drift_detection.py
+│   ├── ensemble_engine.py
+│   ├── error_analysis.py
+│   ├── fairness_engine.py
+│   ├── inference_engine.py
+│   ├── metrics_engine.py
+│   ├── ranking_engine.py
+│   ├── report_generator.py
+│   ├── visualization_engine.py
+│   └── __init__.py
+├── benchmark_results/
+│   ├── .gitkeep
+│   ├── charts/
+│   ├── csv/
+│   ├── json/
+│   ├── logs/
+│   │   └── system.log
+│   ├── raw_predictions/
+│   ├── reports/
+├── configs/
+│   ├── benchmark_config.yaml
+│   ├── fairness_config.yaml
+│   ├── logging_config.yaml
+│   └── model_config.yaml
+├── dashboard/
+│   └── app.py
+├── data/
+│   ├── processed/
+│   │   ├── cleaned_data.csv
+│   │   └── combined_data.csv
+│   ├── raw/
+│   │   ├── davidson_train.csv
+│   │   ├── Jigsaw_train.csv
+│   │   └── Unintended_train.csv
+├── database/
+│   ├── schema.sql
+│   ├── storage_manager.py
+│   ├── toxic_comments_benchmark.db
+│   └── __init__.py
+├── docs/
+│   └── model_artifacts.md
+├── logs/
+│   └── system.log
+├── temp_uploads/
+│   └── comments_only.csv
+├── tests/
+│   ├── .gitkeep
+│   ├── test_api.py
+│   ├── test_benchmark.py
+│   ├── test_integration.py
+│   ├── test_storage.py
+│   └── __init__.py
+├── version_1/
+│   ├── .gitkeep
+│   ├── models/
+│   │   ├── linear_svm.pkl
+│   │   ├── logistic_regression.pkl
+│   │   ├── random_forest.pkl
+│   │   ├── tfidf.pkl
+│   │   ├── X.pkl
+│   │   └── y.pkl
+│   ├── notebooks/
+│   │   └── eda.ipynb
+│   ├── outputs/
+│   │   ├── eda/
+│   │   │   └── class_distribution.png
+│   ├── src/
+│   │   ├── data_preprocessing.py
+│   │   ├── data_preprocessing_2.py
+│   │   ├── evaluation.py
+│   │   ├── explanation.py
+│   │   ├── feature_engineering.py
+│   │   └── model_training.py
+├── version_2/
+│   ├── .gitkeep
+│   ├── models/
+│   │   ├── checkpoint.pkl
+│   │   ├── linear_svm.pkl
+│   │   ├── logistic_regression.pkl
+│   │   ├── tfidf_vectorizer.pkl
+│   │   ├── X_test.pkl
+│   │   ├── X_train.pkl
+│   │   ├── y_test.pkl
+│   │   ├── y_train.pkl
+│   │   ├── bert/
+│   │   │   ├── config.json
+│   │   │   ├── tokenizer.json
+│   │   │   ├── tokenizer_config.json
+│   │   │   ├── checkpoints/
+│   │   │   ├── final/
+│   │   │   │   ├── config.json
+│   │   │   │   ├── model.safetensors
+│   │   │   │   ├── tokenizer.json
+│   │   │   │   ├── tokenizer_config.json
+│   │   │   │   ├── tokenizer_repair_manifest.json
+│   │   │   │   └── training_manifest.json
+│   ├── outputs/
+│   │   ├── final_classification_report.csv
+│   │   ├── final_model_comparison.csv
+│   │   └── model_comparison.csv
+│   ├── src/
+│   │   ├── bert_training.py
+│   │   ├── evaluation.py
+│   │   ├── feature_engineering.py
+│   │   ├── final_evaluation.py
+│   │   ├── fix_bert_tokenizer.py
+│   │   └── model_training.py
+```
+
+### Directory Descriptions
+- `app/` — FastAPI backend application.
+- `app/api/` — API routes and endpoints.
+- `app/core/` — Core configuration, logger, and model registry logic.
+- `artifacts/` — Runtime deployment artifacts (models, tokenizers) for inference.
+- `benchmarking/` — Engines for executing model benchmarks, computing metrics, and fairness/drift analytics.
+- `benchmark_results/` — Output directory for benchmark run predictions, logs, and reports.
+- `configs/` — YAML configuration files for benchmarking and models.
+- `dashboard/` — Streamlit UI dashboard application.
+- `data/` — Project datasets (raw and processed).
+- `database/` — SQLite database and storage management for benchmark tracking.
+- `docs/` — Project documentation.
+- `logs/` — System logs.
+- `tests/` — Test suite for API, benchmarking, and storage.
+- `version_1/` & `version_2/` — Original training code, notebooks, and models for versions 1 and 2.
+- `requirements.txt` — Python dependencies for the platform.
+- `run.py` — Application entry point or runner.
+- `README.md` — Project documentation.
 
 ## Environment & Serialization Compatibility
 - **Primary Runtime**: Python 3.14.5 and `scikit-learn` 1.8.0
