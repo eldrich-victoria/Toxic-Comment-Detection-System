@@ -144,9 +144,12 @@ class ModelRegistry:
 # Global singleton to avoid reloading models on every request
 registry = None
 
-def get_registry(root_dir: Path) -> ModelRegistry:
+def get_registry(root_dir: Optional[Path] = None) -> ModelRegistry:
     global registry
     if registry is None:
+        if root_dir is None:
+            root_dir = Path(__file__).resolve().parent.parent.parent
         registry = ModelRegistry(root_dir)
         registry.load_all_models()
     return registry
+

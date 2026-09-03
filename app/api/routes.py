@@ -7,6 +7,7 @@ from pydantic import BaseModel
 import pandas as pd
 import yaml
 import time
+import json
 from lime.lime_text import LimeTextExplainer
 
 from benchmarking.benchmark_runner import BenchmarkRunner
@@ -50,20 +51,51 @@ def feature_explanation(text: str) -> str:
         return "No explicit toxic keywords detected."
     return "Flagged because it " + ", ".join(reasons)
 
+def normalize_target_label(val: Any) -> int:
+    if pd.isna(val):
+        return None
+    
+    if isinstance(val, (int, float)):
+        if val == 1:
+            return 1
+        elif val == 0:
+            return 0
+            
+    if isinstance(val, str):
+        val_lower = val.strip().lower()
+        if val_lower in ["1", "toxic", "true", "yes"]:
+            return 1
+        elif val_lower in ["0", "not toxic", "false", "no"]:
+            return 0
+            
+    raise HTTPException(
+        status_code=400,
+        detail=f"Invalid target value: '{val}'. Accepted values are 1/0, 'Toxic'/'Not Toxic', 'True'/'False', 'Yes'/'No'."
+    )
+
 @router.get("/models")
 async def get_models():
     """Return available models in the registry."""
-    # Assuming root is the CWD where script is run
-    registry = get_registry(Path("."))
+    registry = get_registry()
     return {
         "models": registry.get_available_models(),
         "statuses": registry.get_model_statuses()
     }
 
+@router.get("/production-model")
+async def get_production_model():
+    """Return the production model manifest."""
+    manifest_path = Path(__file__).resolve().parent.parent.parent / "artifacts" / "production_model.json"
+    if not manifest_path.exists():
+        raise HTTPException(status_code=500, detail="Production model manifest not found.")
+    with open(manifest_path, "r", encoding="utf-8") as f:
+        manifest = json.load(f)
+    return manifest
+
 @router.post("/predict")
 async def predict_text(input: InputText):
     """Run real-time prediction and optional LIME explanation."""
-    registry = get_registry(Path("."))
+    registry = get_registry()
     clean = clean_text(input.text, input.normalize)
     feat_exp = feature_explanation(clean)
     
@@ -118,7 +150,8 @@ async def run_benchmark(file: UploadFile = File(...)):
         if not file.filename.endswith(".csv"):
             raise HTTPException(status_code=400, detail="Only CSV files are supported.")
 
-        temp_dir = Path("temp_uploads")
+        project_root = Path(__file__).resolve().parent.parent.parent
+        temp_dir = project_root / "temp_uploads"
         temp_dir.mkdir(parents=True, exist_ok=True)
         
         # Secure file naming to prevent path traversal
@@ -143,7 +176,7 @@ async def run_benchmark(file: UploadFile = File(...)):
         for idx, row in df.iterrows():
             gt = None
             if target_column:
-                gt = int(row[target_column]) if pd.notna(row[target_column]) else None
+                gt = normalize_target_label(row[target_column])
             
             dataset.append({
                 "id": str(idx),
@@ -151,7 +184,7 @@ async def run_benchmark(file: UploadFile = File(...)):
                 "ground_truth": gt
             })
 
-        config_path = Path("configs/model_config.yaml")
+        config_path = project_root / "configs" / "model_config.yaml"
         if not config_path.exists():
             raise HTTPException(status_code=500, detail="model_config.yaml not found.")
 
@@ -164,7 +197,7 @@ async def run_benchmark(file: UploadFile = File(...)):
         if not model_configs:
             raise HTTPException(status_code=500, detail="No models found in model_config.yaml")
 
-        inference_engine = InferenceEngine(Path("."))
+        inference_engine = InferenceEngine(project_root)
         storage_manager = StorageManager()
         await storage_manager.init_db()
 

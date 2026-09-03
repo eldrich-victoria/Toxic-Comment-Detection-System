@@ -11,10 +11,23 @@ This repository contains a machine learning platform for classifying toxic comme
 - **Batch Benchmarking**: Upload a CSV of comments and ground truth labels to evaluate models in bulk.
 - **Metrics Tracking**: Automatically calculates real Accuracy, Precision, Recall, F1, and F1_Toxic scores based on actual predictions.
 
+### API Documentation
+### 1. `GET /health`
+Returns the status of the API.
+
+### 2. `GET /models`
+Returns a list of all models loaded in the registry.
+
+### 3. `GET /production-model`
+Returns the manifest of the active production model (e.g., v2_bert), including its selection metric and score.
+
+### 4. `POST /predict`
+Run real-time prediction using one or multiple models.
+
 ### Supported Models
 - **Classical Models**: Support for Logistic Regression, Random Forest, and Linear SVM models from two different training iterations (Version 1 and Version 2).
 - **BERT Model**: The codebase fully supports a HuggingFace BERT model for advanced classification, taking advantage of GPU acceleration if available. Note: The large model weight artifacts for BERT are excluded from the main Git repository via `.gitignore`.
-- **Fairness & Drift Analytics**: The dashboards for fairness and drift detection are placeholders. Genuine fairness analysis requires demographic metadata which is absent in standard toxic comment datasets.
+- **Fairness & Drift Analytics**: These features are disabled as appropriate demographic and temporal metadata are absent in standard toxic comment datasets. No fabricated metrics are presented.
 
 ## Project Structure
 
