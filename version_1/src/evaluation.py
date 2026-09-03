@@ -1,5 +1,6 @@
 import pickle
 import os
+import pandas as pd
 
 from sklearn.metrics import (
     classification_report,
@@ -169,6 +170,13 @@ def evaluate(
         )
 
         # Classification report
+        report_dict = classification_report(
+            y_test,
+            y_pred,
+            output_dict=True
+        )
+
+        # Formatted classification report
         report = classification_report(
             y_test,
             y_pred
@@ -199,8 +207,18 @@ def evaluate(
 
         print(cm)
 
+        # Toxic class metrics
+        # Class "1" represents the toxic class.
+        f1_toxic = report_dict["1"]["f1-score"]
+        recall_toxic = report_dict["1"]["recall"]
+        precision_toxic = report_dict["1"]["precision"]
+
+        # Store results
         results[name] = {
             "accuracy": acc,
+            "f1_toxic": f1_toxic,
+            "recall_toxic": recall_toxic,
+            "precision_toxic": precision_toxic,
             "report": report,
             "confusion_matrix": cm
         }
@@ -209,7 +227,60 @@ def evaluate(
 
 
 # -----------------------------
-# 5. MAIN
+# 5. SAVE RESULTS
+# -----------------------------
+
+def save_results(results):
+
+    os.makedirs(
+        os.path.join(
+            get_version_path(),
+            "outputs"
+        ),
+        exist_ok=True
+    )
+
+    rows = []
+
+    for name, metrics in results.items():
+
+        rows.append({
+            "model": name,
+            "accuracy": metrics["accuracy"],
+            "f1_toxic": metrics["f1_toxic"],
+            "recall_toxic": metrics["recall_toxic"],
+            "precision_toxic": metrics["precision_toxic"]
+        })
+
+    results_df = pd.DataFrame(
+        rows
+    )
+
+    output_file = os.path.join(
+        get_version_path(),
+        "outputs",
+        "model_comparison.csv"
+    )
+
+    results_df.to_csv(
+        output_file,
+        index=False
+    )
+
+    print(
+        "\n📁 Results saved to:",
+        output_file
+    )
+
+    print(
+        "\n📊 FINAL COMPARISON:"
+    )
+
+    print(results_df)
+
+
+# -----------------------------
+# 6. MAIN
 # -----------------------------
 
 def main():
@@ -289,13 +360,21 @@ def main():
         y_test
     )
 
+    # -----------------------------
+    # SAVE RESULTS TO CSV
+    # -----------------------------
+
+    save_results(
+        results
+    )
+
     print(
         "\n🎯 Evaluation complete."
     )
 
 
 # -----------------------------
-# 6. RUN PROGRAM
+# 7. RUN PROGRAM
 # -----------------------------
 
 if __name__ == "__main__":
